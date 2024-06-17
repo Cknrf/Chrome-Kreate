@@ -1,0 +1,2 @@
+CustomPanelFriendList
+CustomPanelFriendList$1

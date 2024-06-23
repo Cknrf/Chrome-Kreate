@@ -529,6 +529,7 @@ public class CustomMyPostPicturePanel extends javax.swing.JPanel {
             if (r > 0) {
                 JOptionPane.showMessageDialog(this, "Rekreated the post of " + name + " successfully");
                 facebook.LoadProfile();
+                facebook.verticalScrollBar.setValue(facebook.verticalScrollBar.getMinimum());
                 facebook.displayMyPost();
                 facebook.btnMyPost.setForeground(new Color(0, 167, 255));
                 facebook.btnFriendPost.setForeground(new Color(115, 130, 144));

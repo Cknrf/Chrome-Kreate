@@ -19,6 +19,7 @@ public class PostInformation {
     private Timestamp timeStamp;
     private ImageIcon postPicture;
     private int post_id;
+    private int friend_id;
 
     public PostInformation() {
 
@@ -39,6 +40,25 @@ public class PostInformation {
         this.timeStamp = timeStamp;
         this.postPicture = postPicture;
         this.post_id = post_id;
+    }
+    
+    public PostInformation(ImageIcon icon, String username, String content, Timestamp timeStamp, int post_id, int friend_id){
+        this.icon = icon;
+        this.username = username;
+        this.content = content;
+        this.timeStamp = timeStamp;
+        this.post_id = post_id;
+        this.friend_id = friend_id;
+    }
+    
+    public PostInformation(ImageIcon icon, String username, String content, Timestamp timeStamp, ImageIcon postPicture, int post_id, int friend_id){
+        this.icon = icon;
+        this.username = username;
+        this.content = content;
+        this.timeStamp = timeStamp;
+        this.postPicture = postPicture;
+        this.post_id = post_id;
+        this.friend_id = friend_id;
     }
 
     public void setIcon(ImageIcon icon) {
@@ -83,6 +103,14 @@ public class PostInformation {
 
     public int getPostId() {
         return post_id;
+    }
+    
+    public void setFriendID(int friend_id){
+        this.friend_id = friend_id;
+    }
+    
+    public int getFriendID(){
+        return friend_id;
     }
 
 }

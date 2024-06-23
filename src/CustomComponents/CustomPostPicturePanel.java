@@ -1,4 +1,6 @@
 
+import CustomPanels.CirclePicture;
+import CustomPanels.CustomBorderPostStack;
 import CustomPanels.RoundedPanel;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -7,6 +9,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -20,6 +24,7 @@ import javax.swing.text.DefaultCaret;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -54,6 +59,47 @@ public class CustomPostPicturePanel extends javax.swing.JPanel {
         this.post_id = post_id;
         this.user_id = user_id;
         this.facebook = facebook;
+
+        initComponents();
+        Connect();
+        displayLike();
+        txtPostPicture.setIcon(postPicture);
+
+        LocalDateTime timeNow = LocalDateTime.now();
+        LocalDateTime timeStampDateTime = timeStamp.toLocalDateTime();
+        Duration duration = Duration.between(timeStampDateTime, timeNow);
+
+        formattedDate = formatDuration(duration, timeStampDateTime, timeNow);
+        txtTimeStamp.setText(formattedDate);
+
+        String like = "/imagesIcon/like.png";
+        ImageIcon likeIcon = new ImageIcon(getClass().getResource(like));
+        Image likeIconImage = likeIcon.getImage();
+        Image scaleLike = likeIconImage.getScaledInstance(15, 15, Image.SCALE_SMOOTH);
+        ImageIcon scaleLikeIcon = new ImageIcon(scaleLike);
+        txtLikeIcon.setIcon(scaleLikeIcon);
+        DefaultCaret caret = (DefaultCaret) jTextArea1.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+        SwingUtilities.invokeLater(() -> jTextArea1.setCaretPosition(0));
+
+        hasAlreadyLiked = hasUserLikedPost(user_id, post_id);
+        if (hasAlreadyLiked) {
+            btnLike.setBackground(new Color(153, 153, 255));
+        }
+    }
+
+    private int friend_id;
+
+    public CustomPostPicturePanel(ImageIcon icon, String name, String content, Timestamp timeStamp, ImageIcon postPicture, int post_id, int user_id, FacebookInterface facebook, int friend_id) {
+        this.icon = icon;
+        this.name = name;
+        this.content = content;
+        this.timeStamp = timeStamp;
+        this.postPicture = postPicture;
+        this.post_id = post_id;
+        this.user_id = user_id;
+        this.facebook = facebook;
+        this.friend_id = friend_id;
 
         initComponents();
         Connect();
@@ -179,6 +225,91 @@ public class CustomPostPicturePanel extends javax.swing.JPanel {
         }
     }
 
+    private ArrayList<PostInformation> getMyPost() throws IOException {
+
+        ArrayList<PostInformation> getMyPosts = new ArrayList<PostInformation>();
+        int currentUserID = friend_id;
+
+        String sql = "SELECT a.*, p.* "
+                + "FROM account_table a "
+                + "JOIN post_table p ON a.user_id = p.user_id "
+                + "WHERE a.user_id = ? "
+                + "ORDER BY p.time_stamp DESC";
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setInt(1, currentUserID);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    Blob imageBlob = rs.getBlob("profile_picture");
+                    ImageIcon icon = null;
+                    if (imageBlob != null) {
+                        try (InputStream inputStream = imageBlob.getBinaryStream()) {
+                            BufferedImage image = ImageIO.read(inputStream);
+                            CirclePicture circleImage = new CirclePicture();
+                            BufferedImage circularImage = circleImage.makeCircularImage(image);
+                            Image scaledImage = circularImage.getScaledInstance(25, 25, Image.SCALE_SMOOTH);
+                            icon = new ImageIcon(scaledImage);
+                        }
+                    }
+
+                    String username = rs.getString("name");
+                    String postContent = rs.getString("post_content");
+                    Timestamp timestamp = rs.getTimestamp("time_stamp");
+                    int post_id = rs.getInt("post_id");
+
+                    Blob postImageBlob = rs.getBlob("post_picture");
+                    if (postImageBlob == null || postImageBlob.length() == 0) {
+                        PostInformation postInformation = new PostInformation(icon, username, postContent, timestamp, post_id);
+                        getMyPosts.add(postInformation);
+                    } else {
+                        try (InputStream inputStream1 = postImageBlob.getBinaryStream()) {
+                            BufferedImage postImage = ImageIO.read(inputStream1);
+                            Image scaledPostImage = postImage.getScaledInstance(387, 189, Image.SCALE_SMOOTH);
+                            ImageIcon postPicture = new ImageIcon(scaledPostImage);
+                            PostInformation postInformation = new PostInformation(icon, username, postContent, timestamp, postPicture, post_id);
+                            getMyPosts.add(postInformation);
+                        }
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(FacebookInterface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return getMyPosts;
+    }
+
+    private boolean hasPost = true;
+
+    public void displayMyPost() throws SQLException {
+        int currentUserID = user_id;
+        try {
+            ArrayList<PostInformation> posts = getMyPost();
+            if (posts.isEmpty()) {
+                hasPost = false;
+                CustomNoPost customNoPost = new CustomNoPost("No posts in the newsfeed.");
+                facebook.postInnerContainer.add(customNoPost);
+            }
+            for (PostInformation post : posts) {
+                if (post.getPostPicture() == null) {
+                    CustomViewFriendProfilePostText customPostTextPanel = new CustomViewFriendProfilePostText(post.getIcon(), post.getUsername(), post.getContent(), post.getTimeStamp(), post.getPostId(), currentUserID, facebook);
+                    CustomBorderPostStack customBorder = new CustomBorderPostStack();
+                    facebook.postInnerContainer.add(customPostTextPanel);
+                    facebook.postInnerContainer.add(customBorder);
+                    facebook.postInnerContainer.revalidate();
+                    facebook.postInnerContainer.repaint();
+                } else {
+                    CustomViewFriendProfilePostPicture postPicturePanel = new CustomViewFriendProfilePostPicture(post.getIcon(), post.getUsername(), post.getContent(), post.getTimeStamp(), post.getPostPicture(), post.getPostId(), currentUserID, facebook);
+                    CustomBorderPostStack customBorder = new CustomBorderPostStack();
+                    facebook.postInnerContainer.add(postPicturePanel);
+                    facebook.postInnerContainer.add(customBorder);
+                    facebook.postInnerContainer.revalidate();
+                    facebook.postInnerContainer.repaint();
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(FacebookInterface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
@@ -218,6 +349,11 @@ public class CustomPostPicturePanel extends javax.swing.JPanel {
 
         txtName.setForeground(new java.awt.Color(230, 234, 236));
         txtName.setText(name);
+        txtName.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtNameMouseClicked(evt);
+            }
+        });
 
         jTextArea1.setText(content);
 
@@ -314,7 +450,7 @@ public class CustomPostPicturePanel extends javax.swing.JPanel {
         );
 
         btnLike.setBackground(new java.awt.Color(40, 52, 62));
-    btnLike.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnLike.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnLike.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnLikeMouseEntered(evt);
@@ -467,6 +603,7 @@ public class CustomPostPicturePanel extends javax.swing.JPanel {
             if (r > 0) {
                 JOptionPane.showMessageDialog(this, "Rekreated the post of " + name + " successfully");
                 facebook.LoadProfile();
+                facebook.verticalScrollBar.setValue(facebook.verticalScrollBar.getMinimum());
                 facebook.displayMyPost();
                 facebook.btnMyPost.setForeground(new Color(0, 167, 255));
                 facebook.btnFriendPost.setForeground(new Color(115, 130, 144));
@@ -510,6 +647,22 @@ public class CustomPostPicturePanel extends javax.swing.JPanel {
         displayLike();
         btnLike.setBackground(new Color(153, 153, 255));
         hasAlreadyLiked = hasUserLikedPost(user_id, post_id);
+    }
+
+    private void txtNameMouseClicked(java.awt.event.MouseEvent evt) {
+        try {
+            facebook.verticalScrollBar.setValue(facebook.verticalScrollBar.getMinimum());
+            FriendProfile friendProfile = new FriendProfile(friend_id, facebook);
+            facebook.postInnerContainer.removeAll();
+            facebook.postInnerContainer.add(friendProfile);
+            CustomBorderPostStack customBorder = new CustomBorderPostStack();
+            facebook.postInnerContainer.add(customBorder);
+            displayMyPost();
+            facebook.revalidate();
+            facebook.repaint();
+        } catch (SQLException ex) {
+            Logger.getLogger(CustomPostPicturePanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     // Variables declaration - do not modify                     

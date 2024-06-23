@@ -75,6 +75,7 @@ public class CustomFriendRequestPanel extends javax.swing.JPanel {
 
                     if (k > 0) {
                         JOptionPane.showMessageDialog(facebookInterface, "Friend request accepted successfully");
+                        facebookInterface.LoadProfile();
                         facebookInterface.displayPendingRequest();
                     } else {
                         JOptionPane.showMessageDialog(facebookInterface, "Failed to accept the friend request");
@@ -82,6 +83,8 @@ public class CustomFriendRequestPanel extends javax.swing.JPanel {
                 } catch (SQLException ex) {
                     Logger.getLogger(CustomFriendRequestPanel.class.getName()).log(Level.SEVERE, null, ex);
                     JOptionPane.showMessageDialog(facebookInterface, "An error occurred while accepting the friend request");
+                } catch (IOException ex) {
+                    Logger.getLogger(CustomFriendRequestPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });

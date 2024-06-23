@@ -76,6 +76,7 @@ public class CustomFriendSuggestionPanel extends javax.swing.JPanel {
 
                     if (k == 1) {
                         JOptionPane.showMessageDialog(facebookInterface, "Friend request sent successfully");
+                        facebookInterface.LoadProfile();
                         facebookInterface.displayFriendSuggestion();
                     } else {
                         JOptionPane.showMessageDialog(facebookInterface, "Sending friend request failed");

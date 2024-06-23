@@ -1,14 +1,22 @@
 
+import CustomPanels.CirclePicture;
+import CustomPanels.CustomBorderPostStack;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 public class CustomFriendListPanel extends javax.swing.JPanel {
 
@@ -16,7 +24,7 @@ public class CustomFriendListPanel extends javax.swing.JPanel {
     private ImageIcon icon;
     private int friendID;
     private int userID;
-    private FacebookInterface facebookInterface;
+    private FacebookInterface facebook;
 
     Connection con;
     PreparedStatement pst;
@@ -33,14 +41,99 @@ public class CustomFriendListPanel extends javax.swing.JPanel {
         }
     }
 
-    public CustomFriendListPanel(ImageIcon icon, String name, int userID, int friendID, FacebookInterface facebookInterface) {
+    public CustomFriendListPanel(ImageIcon icon, String name, int userID, int friendID, FacebookInterface facebook) {
         this.icon = icon;
         this.name = name;
         this.userID = userID;
         this.friendID = friendID;
-        this.facebookInterface = facebookInterface;
+        this.facebook = facebook;
         initComponents();
         Connect();
+    }
+    
+     private ArrayList<PostInformation> getMyPost() throws IOException {
+
+        ArrayList<PostInformation> getMyPosts = new ArrayList<PostInformation>();
+        int currentUserID = friendID;
+
+        String sql = "SELECT a.*, p.* "
+                + "FROM account_table a "
+                + "JOIN post_table p ON a.user_id = p.user_id "
+                + "WHERE a.user_id = ? "
+                + "ORDER BY p.time_stamp DESC";
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setInt(1, currentUserID);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    Blob imageBlob = rs.getBlob("profile_picture");
+                    ImageIcon icon = null;
+                    if (imageBlob != null) {
+                        try (InputStream inputStream = imageBlob.getBinaryStream()) {
+                            BufferedImage image = ImageIO.read(inputStream);
+                            CirclePicture circleImage = new CirclePicture();
+                            BufferedImage circularImage = circleImage.makeCircularImage(image);
+                            Image scaledImage = circularImage.getScaledInstance(25, 25, Image.SCALE_SMOOTH);
+                            icon = new ImageIcon(scaledImage);
+                        }
+                    }
+
+                    String username = rs.getString("name");
+                    String postContent = rs.getString("post_content");
+                    Timestamp timestamp = rs.getTimestamp("time_stamp");
+                    int post_id = rs.getInt("post_id");
+
+                    Blob postImageBlob = rs.getBlob("post_picture");
+                    if (postImageBlob == null || postImageBlob.length() == 0) {
+                        PostInformation postInformation = new PostInformation(icon, username, postContent, timestamp, post_id);
+                        getMyPosts.add(postInformation);
+                    } else {
+                        try (InputStream inputStream1 = postImageBlob.getBinaryStream()) {
+                            BufferedImage postImage = ImageIO.read(inputStream1);
+                            Image scaledPostImage = postImage.getScaledInstance(387, 189, Image.SCALE_SMOOTH);
+                            ImageIcon postPicture = new ImageIcon(scaledPostImage);
+                            PostInformation postInformation = new PostInformation(icon, username, postContent, timestamp, postPicture, post_id);
+                            getMyPosts.add(postInformation);
+                        }
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(FacebookInterface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return getMyPosts;
+    }
+
+    private boolean hasPost = true;
+
+    public void displayMyPost() throws SQLException {
+        int currentUserID = userID;
+        try {
+            ArrayList<PostInformation> posts = getMyPost();
+            if (posts.isEmpty()) {
+                hasPost = false;
+                CustomNoPost customNoPost = new CustomNoPost("No posts in the newsfeed.");
+                facebook.postInnerContainer.add(customNoPost);
+            }
+            for (PostInformation post : posts) {
+                if (post.getPostPicture() == null) {
+                    CustomViewFriendProfilePostText customPostTextPanel = new CustomViewFriendProfilePostText(post.getIcon(), post.getUsername(), post.getContent(), post.getTimeStamp(), post.getPostId(), currentUserID, facebook);
+                    CustomBorderPostStack customBorder = new CustomBorderPostStack();
+                    facebook.postInnerContainer.add(customPostTextPanel);
+                    facebook.postInnerContainer.add(customBorder);
+                    facebook.postInnerContainer.revalidate();
+                    facebook.postInnerContainer.repaint();
+                } else {
+                    CustomViewFriendProfilePostPicture postPicturePanel = new CustomViewFriendProfilePostPicture(post.getIcon(), post.getUsername(), post.getContent(), post.getTimeStamp(), post.getPostPicture(), post.getPostId(), currentUserID, facebook);
+                    CustomBorderPostStack customBorder = new CustomBorderPostStack();
+                    facebook.postInnerContainer.add(postPicturePanel);
+                    facebook.postInnerContainer.add(customBorder);
+                    facebook.postInnerContainer.revalidate();
+                    facebook.postInnerContainer.repaint();
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(FacebookInterface.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -61,6 +154,12 @@ public class CustomFriendListPanel extends javax.swing.JPanel {
         
         UserName.setForeground(new Color(115,130,144));
         UserName.setText(name);
+        UserName.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnUserNameMouseClicked(evt);
+            }
+        });
+
 
         addButton.setBackground(new java.awt.Color(153, 153, 255));
         addButton.setText("Friend");
@@ -113,6 +212,23 @@ public class CustomFriendListPanel extends javax.swing.JPanel {
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
     }
+    
+    private void btnUserNameMouseClicked(java.awt.event.MouseEvent evt) {
+        try {
+            facebook.verticalScrollBar.setValue(facebook.verticalScrollBar.getMinimum());
+            FriendProfile friendProfile = new FriendProfile(friendID, facebook);
+            facebook.postInnerContainer.removeAll();
+            facebook.postInnerContainer.add(friendProfile);
+            CustomBorderPostStack customBorder = new CustomBorderPostStack();
+            facebook.postInnerContainer.add(customBorder);
+            displayMyPost();
+            facebook.revalidate();
+            facebook.repaint();
+        } catch (SQLException ex) {
+            Logger.getLogger(CustomPostPicturePanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
 
     // Variables declaration - do not modify
     private javax.swing.JLabel UserName;

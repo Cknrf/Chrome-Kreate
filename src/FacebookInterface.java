@@ -49,6 +49,8 @@ public class FacebookInterface extends javax.swing.JFrame {
 
     public FacebookInterface() {
         initComponents();
+        FriendProfile friendList = new FriendProfile();
+        postInnerContainer.add(friendList);
     }
 
     public FacebookInterface(String username) throws SQLException, IOException {
@@ -66,8 +68,6 @@ public class FacebookInterface extends javax.swing.JFrame {
         FriendContainer.add(FriendSuggestionCard, "FriendSuggestionCard");
         FriendContainer.add(FriendRequestCard, "FriendRequestCard");
         FriendContainer.add(FriendListCard, "FriendListCard");
-        
-        
 
         displayDefaultIcon();
         btnMyProfile.requestFocus();
@@ -186,6 +186,7 @@ public class FacebookInterface extends javax.swing.JFrame {
         postInnerContainer = new javax.swing.JPanel();
         btnMyPost = new javax.swing.JLabel();
         btnFriendPost = new javax.swing.JLabel();
+        friendName = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -207,7 +208,7 @@ public class FacebookInterface extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 318, Short.MAX_VALUE)
+            .addGap(0, 119, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1325,6 +1326,9 @@ public class FacebookInterface extends javax.swing.JFrame {
         postInnerContainer.setLayout(new javax.swing.BoxLayout(postInnerContainer, javax.swing.BoxLayout.Y_AXIS));
         jScrollPane1.setViewportView(postInnerContainer);
 
+        verticalScrollBar = jScrollPane1.getVerticalScrollBar();
+        verticalScrollBar.setValue(verticalScrollBar.getMinimum());
+
         jPanel16.add(jScrollPane1, "card2");
 
         btnMyPost.setForeground(new java.awt.Color(0, 167, 255));
@@ -1355,6 +1359,19 @@ public class FacebookInterface extends javax.swing.JFrame {
             }
         });
 
+        friendName.setForeground(new java.awt.Color(0, 167, 255));
+        friendName.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                friendNameMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                friendNameMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                friendNameMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
@@ -1362,9 +1379,16 @@ public class FacebookInterface extends javax.swing.JFrame {
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(SwitchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
+                        .addComponent(displayProfile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel1))
+                .addGap(16, 16, 16)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(141, 141, 141)
+                        .addGap(9, 9, 9)
+                        .addComponent(friendName, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(33, 33, 33)
                         .addComponent(btnMyPost, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1373,13 +1397,9 @@ public class FacebookInterface extends javax.swing.JFrame {
                         .addGap(20, 20, 20))
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(SwitchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
-                            .addComponent(displayProfile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(16, 16, 16)
-                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(PostPanelCard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)))
                 .addComponent(RightSidePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(16, 16, 16))
         );
@@ -1395,7 +1415,8 @@ public class FacebookInterface extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnMyPost)
-                            .addComponent(btnFriendPost))
+                            .addComponent(btnFriendPost)
+                            .addComponent(friendName))
                         .addGap(1, 1, 1)))
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(RightSidePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 552, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1815,8 +1836,11 @@ public class FacebookInterface extends javax.swing.JFrame {
 
     private boolean isBtnMyPostIsClicked = true;
     private boolean isFriendPostIsClicked;
+    
+    public javax.swing.JScrollBar verticalScrollBar;
     private void btnMyPostMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMyPostMouseClicked
         if (!hasPost) {
+            
             NoPost noPost = new NoPost("You don't have any post.");
             postInnerContainer.add(noPost);
             postInnerContainer.revalidate();
@@ -1824,7 +1848,9 @@ public class FacebookInterface extends javax.swing.JFrame {
         }
 
         try {
+            verticalScrollBar.setValue(verticalScrollBar.getMinimum());
             displayMyPost();
+            
         } catch (SQLException ex) {
             Logger.getLogger(FacebookInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1836,6 +1862,7 @@ public class FacebookInterface extends javax.swing.JFrame {
         btnFriendPost.setForeground(new Color(115, 130, 144));
 
         btnMyPost.requestFocus();
+        friendName.setText("");
     }//GEN-LAST:event_btnMyPostMouseClicked
 
     private void btnFriendPostMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnFriendPostMouseClicked
@@ -1846,6 +1873,7 @@ public class FacebookInterface extends javax.swing.JFrame {
             postInnerContainer.repaint();
         }
         try {
+            verticalScrollBar.setValue(verticalScrollBar.getMinimum());
             displayFriendPost();
         } catch (SQLException ex) {
             Logger.getLogger(FacebookInterface.class.getName()).log(Level.SEVERE, null, ex);
@@ -1857,6 +1885,8 @@ public class FacebookInterface extends javax.swing.JFrame {
         btnMyPost.setForeground(new Color(115, 130, 144));
 
         btnFriendPost.requestFocus();
+        
+        friendName.setText("");
     }//GEN-LAST:event_btnFriendPostMouseClicked
 
     private void btnMyPostMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMyPostMouseEntered
@@ -1936,7 +1966,7 @@ public class FacebookInterface extends javax.swing.JFrame {
     }//GEN-LAST:event_btnFriendlistMouseExited
 
     private void jPanel14MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel14MouseExited
-        jPanel14.setBackground(new Color(40,52,62));
+        jPanel14.setBackground(new Color(40, 52, 62));
     }//GEN-LAST:event_jPanel14MouseExited
 
     private void mainPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mainPanelMouseClicked
@@ -1946,6 +1976,18 @@ public class FacebookInterface extends javax.swing.JFrame {
     private void postInnerContainerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_postInnerContainerMouseClicked
         mainPanel.requestFocusInWindow();
     }//GEN-LAST:event_postInnerContainerMouseClicked
+
+    private void friendNameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_friendNameMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_friendNameMouseClicked
+
+    private void friendNameMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_friendNameMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_friendNameMouseEntered
+
+    private void friendNameMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_friendNameMouseExited
+        // TODO add your handling code here:
+    }//GEN-LAST:event_friendNameMouseExited
 
     private void actionListenerBioTextArea() {
         bioTextArea.getDocument().addDocumentListener(new DocumentListener() {
@@ -1995,7 +2037,7 @@ public class FacebookInterface extends javax.swing.JFrame {
                 + "JOIN friendship_table f ON p.user_id = f.friend_id "
                 + "WHERE f.user_id = ? AND f.status = 'Accepted' "
                 + "UNION "
-                + "SELECT a.user_id AS account_user_id, a.username, a.password, a.profile_picture, "
+                + "SELECT a.user_id AS account_user_id, a.name, a.password, a.profile_picture, "
                 + "p.post_id, p.user_id AS post_user_id, p.post_content, p.post_picture, p.time_stamp AS post_time "
                 + "FROM account_table a "
                 + "JOIN post_table p ON a.user_id = p.user_id "
@@ -2025,17 +2067,19 @@ public class FacebookInterface extends javax.swing.JFrame {
                     String postContent = rs.getString("post_content");
                     Timestamp timestamp = rs.getTimestamp("post_time");
                     int post_id = rs.getInt("post_id");
+                    int friend_id = rs.getInt("account_user_id");
+                    
 
                     Blob postImageBlob = rs.getBlob("post_picture");
                     if (postImageBlob == null || postImageBlob.length() == 0) {
-                        PostInformation postInformation = new PostInformation(icon, username, postContent, timestamp, post_id);
+                        PostInformation postInformation = new PostInformation(icon, username, postContent, timestamp, post_id, friend_id);
                         friendPosts.add(postInformation);
                     } else {
                         try (InputStream inputStream1 = postImageBlob.getBinaryStream()) {
                             BufferedImage postImage = ImageIO.read(inputStream1);
                             Image scaledPostImage = postImage.getScaledInstance(387, 189, Image.SCALE_SMOOTH);
                             ImageIcon postPicture = new ImageIcon(scaledPostImage);
-                            PostInformation postInformation = new PostInformation(icon, username, postContent, timestamp, postPicture, post_id);
+                            PostInformation postInformation = new PostInformation(icon, username, postContent, timestamp, postPicture, post_id, friend_id);
                             friendPosts.add(postInformation);
                         }
                     }
@@ -2059,21 +2103,20 @@ public class FacebookInterface extends javax.swing.JFrame {
                 NoPost noPost = new NoPost("No posts in the newsfeed.");
                 postInnerContainer.add(noPost);
                 hasFriendPost = false;
-            }
-            else{
+            } else {
                 Collections.shuffle(posts);
             }
-            
+
             for (PostInformation post : posts) {
                 if (post.getPostPicture() == null) {
-                    CustomPostTextPanel CustomPostTextPanel = new CustomPostTextPanel(post.getIcon(), post.getUsername(), post.getContent(), post.getTimeStamp(), post.getPostId(), currentUserID, this);
+                    CustomPostTextPanel CustomPostTextPanel = new CustomPostTextPanel(post.getIcon(), post.getUsername(), post.getContent(), post.getTimeStamp(), post.getPostId(), currentUserID, this, post.getFriendID());
                     CustomBorderPostStack customBorder = new CustomBorderPostStack();
                     postInnerContainer.add(CustomPostTextPanel);
                     postInnerContainer.add(customBorder);
                     postInnerContainer.revalidate();
                     postInnerContainer.repaint();
                 } else {
-                    CustomPostPicturePanel postPicturePanel = new CustomPostPicturePanel(post.getIcon(), post.getUsername(), post.getContent(), post.getTimeStamp(), post.getPostPicture(), post.getPostId(), currentUserID, this);
+                    CustomPostPicturePanel postPicturePanel = new CustomPostPicturePanel(post.getIcon(), post.getUsername(), post.getContent(), post.getTimeStamp(), post.getPostPicture(), post.getPostId(), currentUserID, this, post.getFriendID());
                     CustomBorderPostStack customBorder = new CustomBorderPostStack();
                     postInnerContainer.add(postPicturePanel);
                     postInnerContainer.add(customBorder);
@@ -2101,10 +2144,10 @@ public class FacebookInterface extends javax.swing.JFrame {
             Logger.getLogger(FacebookInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
         String sql = "SELECT a.*, p.* "
-             + "FROM account_table a "
-             + "JOIN post_table p ON a.user_id = p.user_id "
-             + "WHERE a.user_id = ? "
-             + "ORDER BY p.time_stamp DESC";
+                + "FROM account_table a "
+                + "JOIN post_table p ON a.user_id = p.user_id "
+                + "WHERE a.user_id = ? "
+                + "ORDER BY p.time_stamp DESC";
         try (PreparedStatement pst = con.prepareStatement(sql)) {
             pst.setInt(1, currentUserID);
             try (ResultSet rs = pst.executeQuery()) {
@@ -2192,7 +2235,7 @@ public class FacebookInterface extends javax.swing.JFrame {
             Logger.getLogger(FacebookInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            String sql = "SELECT account_table.user_id, account_table.username, account_table.profile_picture "
+            String sql = "SELECT account_table.user_id, account_table.name, account_table.profile_picture "
                     + "FROM friendship_table "
                     + "JOIN account_table ON friendship_table.user_id = account_table.user_id "
                     + "WHERE friendship_table.friend_id = ? AND friendship_table.status = 'Pending'";
@@ -2211,7 +2254,7 @@ public class FacebookInterface extends javax.swing.JFrame {
                 Image scaledImage = circularImage.getScaledInstance(25, 25, Image.SCALE_SMOOTH);
                 ImageIcon icon = new ImageIcon(scaledImage);
                 int friendID = rs.getInt("user_id");
-                String name = rs.getString("username");
+                String name = rs.getString("name");
 
                 UserInformation pendingFriend = new UserInformation(icon, name, friendID);
                 pendingFriends.add(pendingFriend);
@@ -2270,7 +2313,8 @@ public class FacebookInterface extends javax.swing.JFrame {
                 ImageIcon icon = new ImageIcon(scaledImage);
 
                 int friendID = rs.getInt("user_id");
-                String name = rs.getString("username");
+                String name = rs.getString("name");
+
                 UserInformation friend = new UserInformation(icon, name, friendID);
                 friends.add(friend);
             }
@@ -2297,7 +2341,9 @@ public class FacebookInterface extends javax.swing.JFrame {
     private ArrayList<UserInformation> getPotentialFriends() throws IOException {
         ArrayList<UserInformation> users = new ArrayList<UserInformation>();
         try {
-            String query = "SELECT * FROM account_table WHERE user_id != ? AND user_id NOT IN (SELECT friend_id FROM friendship_table WHERE user_id = ?) AND user_id NOT IN (SELECT user_id FROM friendship_table WHERE friend_id = ?)";
+            String query = "SELECT * FROM account_table WHERE user_id != ? AND user_id NOT IN "
+                    + "(SELECT friend_id FROM friendship_table WHERE user_id = ?) "
+                    + "AND user_id NOT IN (SELECT user_id FROM friendship_table WHERE friend_id = ?)";
             PreparedStatement pstmt = con.prepareStatement(query);
             int userId = CurrentUserID();
             pstmt.setInt(1, userId); // Replace with the actual value of user_id
@@ -2389,11 +2435,28 @@ public class FacebookInterface extends javax.swing.JFrame {
             String name = rs.getString(4);
             txtName.setText(name);
             Name.setText(name);
+            friendName.setText("");
 
             txtNumberFollowing.setText(Integer.toString(getNumberOfFollowing()));
             txtNumberFollowers.setText(Integer.toString(getNumberOfFollowers()));
 
-            panelFriendSuggestionIcon.setBackground(new Color(121, 98, 242));
+            
+            
+            if(isFriendSuggestionClicked){
+                panelFriendSuggestionIcon.setBackground(new Color(121, 98, 242));
+                panelFriendlistIcon.setBackground(new Color(6, 20, 29));
+                panelFriendRequestIcon.setBackground(new Color(6, 20, 29));
+            }
+            else if(isFriendListClicked){
+                panelFriendSuggestionIcon.setBackground(new Color(6, 20, 29));
+                panelFriendlistIcon.setBackground(new Color(121, 98, 242));
+                panelFriendRequestIcon.setBackground(new Color(6, 20, 29));
+            }
+            else{
+                panelFriendSuggestionIcon.setBackground(new Color(6, 20, 29));
+                panelFriendlistIcon.setBackground(new Color(6, 20, 29));
+                panelFriendRequestIcon.setBackground(new Color(121, 98, 242));
+            }
         }
     }
 
@@ -2538,7 +2601,7 @@ public class FacebookInterface extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                    new FacebookInterface().setVisible(true);
+                new FacebookInterface().setVisible(true);
             }
         });
     }
@@ -2570,6 +2633,7 @@ public class FacebookInterface extends javax.swing.JFrame {
     private javax.swing.JPanel displayFollow;
     private javax.swing.JPanel displayProfile;
     private javax.swing.JPanel editCoverPhoto;
+    public javax.swing.JLabel friendName;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -2608,7 +2672,7 @@ public class FacebookInterface extends javax.swing.JFrame {
     private javax.swing.JPanel panelFriendRequestIcon;
     private javax.swing.JPanel panelFriendSuggestionIcon;
     private javax.swing.JPanel panelFriendlistIcon;
-    private javax.swing.JPanel postInnerContainer;
+    public javax.swing.JPanel postInnerContainer;
     private javax.swing.JPanel postSection;
     private javax.swing.JTextArea postTextArea;
     private javax.swing.JLabel profilePicturePostPanel;

@@ -923,6 +923,7 @@
                       </Properties>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ScrollPaneClass11()"/>
+                        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="friendListVerticalScrollBar = ScrollPane.getVerticalScrollBar();&#xa;friendListVerticalScrollBar.setValue(friendListVerticalScrollBar.getMinimum());"/>
                       </AuxValues>
 
                       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>

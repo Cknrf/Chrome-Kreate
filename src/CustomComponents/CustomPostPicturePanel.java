@@ -349,6 +349,7 @@ public class CustomPostPicturePanel extends javax.swing.JPanel {
 
         txtName.setForeground(new java.awt.Color(230, 234, 236));
         txtName.setText(name);
+        txtName.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         txtName.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 txtNameMouseClicked(evt);
@@ -652,7 +653,7 @@ public class CustomPostPicturePanel extends javax.swing.JPanel {
     private void txtNameMouseClicked(java.awt.event.MouseEvent evt) {
         try {
             facebook.verticalScrollBar.setValue(facebook.verticalScrollBar.getMinimum());
-            FriendProfile friendProfile = new FriendProfile(friend_id, facebook);
+            FriendProfile friendProfile = new FriendProfile(user_id ,friend_id, facebook);
             facebook.postInnerContainer.removeAll();
             facebook.postInnerContainer.add(friendProfile);
             CustomBorderPostStack customBorder = new CustomBorderPostStack();

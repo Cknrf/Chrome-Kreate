@@ -19,6 +19,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 
 
@@ -38,9 +39,11 @@ public class FriendProfile extends javax.swing.JPanel {
     
     private int friend_id;
     private FacebookInterface facebook;
+    private int user_id;
     
-    public FriendProfile(int friend_id, FacebookInterface facebook){
+    public FriendProfile(int user_id ,int friend_id, FacebookInterface facebook){
         try {
+            this.user_id = user_id;
             this.friend_id = friend_id;
             this.facebook = facebook;
             Connect();
@@ -149,9 +152,9 @@ public class FriendProfile extends javax.swing.JPanel {
         txtCoverPhoto = new javax.swing.JLabel();
         txtName = new javax.swing.JLabel();
         txtBio = new javax.swing.JLabel();
-        txtUsername = new javax.swing.JLabel();
         jPanel3 = new RoundedPanel(15);
         jLabel1 = new javax.swing.JLabel();
+        txtUsername = new javax.swing.JLabel();
 
         setMaximumSize(new java.awt.Dimension(466, 371));
         setMinimumSize(new java.awt.Dimension(466, 371));
@@ -189,14 +192,21 @@ public class FriendProfile extends javax.swing.JPanel {
         txtBio.setText("jLabel1");
         txtBio.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
-        txtUsername.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
-        txtUsername.setForeground(new java.awt.Color(115, 130, 144));
-        txtUsername.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        txtUsername.setText("jLabel1");
-
         jPanel3.setBackground(new java.awt.Color(153, 153, 255));
-        jPanel3.setMaximumSize(new java.awt.Dimension(120, 26));
-        jPanel3.setMinimumSize(new java.awt.Dimension(120, 26));
+        jPanel3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jPanel3.setMaximumSize(new java.awt.Dimension(128, 26));
+        jPanel3.setMinimumSize(new java.awt.Dimension(128, 26));
+        jPanel3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanel3MouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jPanel3MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jPanel3MouseExited(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Dialog", 0, 13)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -205,22 +215,32 @@ public class FriendProfile extends javax.swing.JPanel {
         jLabel1.setMaximumSize(new java.awt.Dimension(120, 26));
         jLabel1.setMinimumSize(new java.awt.Dimension(120, 26));
         jLabel1.setPreferredSize(new java.awt.Dimension(120, 26));
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel1MouseClicked(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+            .addGap(0, 128, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGap(0, 26, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
+
+        txtUsername.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
+        txtUsername.setForeground(new java.awt.Color(115, 130, 144));
+        txtUsername.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        txtUsername.setText("jLabel1");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -268,9 +288,47 @@ public class FriendProfile extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jLabel1MouseClicked
+    private void jPanel3MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel3MouseEntered
+        jPanel3.setBackground(new Color(195, 7, 103));
+    }//GEN-LAST:event_jPanel3MouseEntered
+
+    private void jPanel3MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel3MouseExited
+        jPanel3.setBackground(new Color(153,153,255));
+    }//GEN-LAST:event_jPanel3MouseExited
+
+    private void jPanel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel3MouseClicked
+        
+        String name = txtName.getText();
+        
+        int response = JOptionPane.showConfirmDialog(facebook, "Are you sure you want to unfriend " + name, "Confirm Unfriend", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if(response == JOptionPane.YES_NO_OPTION){
+            try {
+                pst = con.prepareStatement("DELETE from friendship_table WHERE (user_id = ? and friend_id = ? and status = ?) OR (user_id = ? and friend_id = ? and status = ?)");
+                pst.setInt(1, user_id);
+                pst.setInt(2, friend_id);
+                pst.setString(3, "Accepted");
+                pst.setInt(4, friend_id);
+                pst.setInt(5, user_id);
+                pst.setString(6, "Accepted");
+                int k = pst.executeUpdate();
+                
+                if(k > 0){
+                    JOptionPane.showMessageDialog(facebook, "You have successfully unfriended " + name + ".");
+                     facebook.LoadProfile();
+                     facebook.displayMyPost();
+                     facebook.displayFriend();
+                     facebook.displayFriendSuggestion();
+                }
+                else{
+                    JOptionPane.showMessageDialog(facebook, "Failed to unfriend " + name + ". Please try again.");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(CustomMyPostPicturePanel.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(CustomMyPostPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jPanel3MouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

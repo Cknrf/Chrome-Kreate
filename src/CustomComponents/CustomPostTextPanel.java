@@ -36,7 +36,7 @@ public class CustomPostTextPanel extends javax.swing.JPanel {
     }
 
     private ImageIcon icon;
-    private String username;
+    private String name;
     private String content;
     private Timestamp timeStamp;
     private int post_id;
@@ -45,9 +45,9 @@ public class CustomPostTextPanel extends javax.swing.JPanel {
     private FacebookInterface facebook;
     private String formattedDate;
 
-    public CustomPostTextPanel(ImageIcon icon, String username, String content, Timestamp timeStamp, int post_id, int user_id, FacebookInterface facebook) {
+    public CustomPostTextPanel(ImageIcon icon, String name, String content, Timestamp timeStamp, int post_id, int user_id, FacebookInterface facebook) {
         this.icon = icon;
-        this.username = username;
+        this.name = name;
         this.content = content;
         this.timeStamp = timeStamp;
         this.post_id = post_id;
@@ -84,9 +84,9 @@ public class CustomPostTextPanel extends javax.swing.JPanel {
 
     private int friend_id;
 
-    public CustomPostTextPanel(ImageIcon icon, String username, String content, Timestamp timeStamp, int post_id, int user_id, FacebookInterface facebook, int friend_id) {
+    public CustomPostTextPanel(ImageIcon icon, String name, String content, Timestamp timeStamp, int post_id, int user_id, FacebookInterface facebook, int friend_id) {
         this.icon = icon;
-        this.username = username;
+        this.name = name;
         this.content = content;
         this.timeStamp = timeStamp;
         this.post_id = post_id;
@@ -245,21 +245,21 @@ public class CustomPostTextPanel extends javax.swing.JPanel {
                         }
                     }
 
-                    String username = rs.getString("name");
+                    String name = rs.getString("name");
                     String postContent = rs.getString("post_content");
                     Timestamp timestamp = rs.getTimestamp("time_stamp");
                     int post_id = rs.getInt("post_id");
 
                     Blob postImageBlob = rs.getBlob("post_picture");
                     if (postImageBlob == null || postImageBlob.length() == 0) {
-                        PostInformation postInformation = new PostInformation(icon, username, postContent, timestamp, post_id);
+                        PostInformation postInformation = new PostInformation(icon, name, postContent, timestamp, post_id);
                         getMyPosts.add(postInformation);
                     } else {
                         try (InputStream inputStream1 = postImageBlob.getBinaryStream()) {
                             BufferedImage postImage = ImageIO.read(inputStream1);
                             Image scaledPostImage = postImage.getScaledInstance(387, 189, Image.SCALE_SMOOTH);
                             ImageIcon postPicture = new ImageIcon(scaledPostImage);
-                            PostInformation postInformation = new PostInformation(icon, username, postContent, timestamp, postPicture, post_id);
+                            PostInformation postInformation = new PostInformation(icon, name, postContent, timestamp, postPicture, post_id);
                             getMyPosts.add(postInformation);
                         }
                     }
@@ -310,7 +310,7 @@ public class CustomPostTextPanel extends javax.swing.JPanel {
         jPanel7 = new RoundedPanel(25);
         jPanel8 = new javax.swing.JPanel();
         txtProfilePicture3 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        txtName = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jScrollPane1 = new ScrollPaneClass11();
         jTextArea1 = new javax.swing.JTextArea();
@@ -337,11 +337,13 @@ public class CustomPostTextPanel extends javax.swing.JPanel {
         txtProfilePicture3.setMaximumSize(new java.awt.Dimension(30, 30));
         txtProfilePicture3.setPreferredSize(new java.awt.Dimension(30, 30));
 
-        jLabel8.setForeground(new java.awt.Color(230, 234, 236));
-        jLabel8.setText(username);
-        jLabel8.addMouseListener(new java.awt.event.MouseAdapter() {
+        txtName.setForeground(new java.awt.Color(230, 234, 236));
+        txtName.setText(name);
+                txtName.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        txtName.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel8(evt);
+                txtName(evt);
             }
         });
 
@@ -361,7 +363,7 @@ public class CustomPostTextPanel extends javax.swing.JPanel {
                                 .addComponent(txtProfilePicture3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
+                                        .addComponent(txtName, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
                                         .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addContainerGap())
         );
@@ -371,7 +373,7 @@ public class CustomPostTextPanel extends javax.swing.JPanel {
                                 .addContainerGap()
                                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addGroup(jPanel8Layout.createSequentialGroup()
-                                                .addComponent(jLabel8)
+                                                .addComponent(txtName)
                                                 .addGap(0, 0, Short.MAX_VALUE)
                                                 .addComponent(jLabel9))
                                         .addComponent(txtProfilePicture3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -565,7 +567,7 @@ public class CustomPostTextPanel extends javax.swing.JPanel {
             int r = pst.executeUpdate();
 
             if (r > 0) {
-                JOptionPane.showMessageDialog(this, "Rekreated the post of " + username + " successfully");
+                JOptionPane.showMessageDialog(this, "Rekreated the post of " + name + " successfully");
                 facebook.LoadProfile();
                 facebook.verticalScrollBar.setValue(facebook.verticalScrollBar.getMinimum());
                 facebook.displayMyPost();
@@ -615,10 +617,10 @@ public class CustomPostTextPanel extends javax.swing.JPanel {
 
     }
 
-    private void jLabel8(java.awt.event.MouseEvent evt) {
+    private void txtName(java.awt.event.MouseEvent evt) {
         try {
             facebook.verticalScrollBar.setValue(facebook.verticalScrollBar.getMinimum());
-            FriendProfile friendProfile = new FriendProfile(friend_id, facebook);
+            FriendProfile friendProfile = new FriendProfile(user_id, friend_id, facebook);
             facebook.postInnerContainer.removeAll();
             facebook.postInnerContainer.add(friendProfile);
             CustomBorderPostStack customBorder = new CustomBorderPostStack();
@@ -637,7 +639,7 @@ public class CustomPostTextPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel txtName;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;

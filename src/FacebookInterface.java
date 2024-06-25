@@ -626,6 +626,8 @@ public class FacebookInterface extends javax.swing.JFrame {
         ScrollPane.setForeground(new java.awt.Color(27, 39, 48));
         ScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         ScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        friendListVerticalScrollBar = ScrollPane.getVerticalScrollBar();
+        friendListVerticalScrollBar.setValue(friendListVerticalScrollBar.getMinimum());
 
         FriendContainer.setBackground(new java.awt.Color(27, 39, 48));
         FriendContainer.setLayout(new java.awt.CardLayout());
@@ -1761,7 +1763,9 @@ public class FacebookInterface extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_panelFriendRequestIconMouseExited
 
+    public javax.swing.JScrollBar friendListVerticalScrollBar;
     private void panelFriendSuggestionIconMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelFriendSuggestionIconMouseClicked
+        friendListVerticalScrollBar.setValue(friendListVerticalScrollBar.getMinimum());
         friendLayout.show(FriendContainer, "FriendSuggestionCard");
         panelFriendSuggestionIcon.setBackground(new Color(121, 98, 242));
         panelFriendlistIcon.setBackground(new Color(6, 20, 29));
@@ -1780,6 +1784,7 @@ public class FacebookInterface extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(FacebookInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
+        friendListVerticalScrollBar.setValue(friendListVerticalScrollBar.getMinimum());
         friendLayout.show(FriendContainer, "FriendListCard");
         panelFriendlistIcon.setBackground(new Color(121, 98, 242));
         panelFriendSuggestionIcon.setBackground(new Color(6, 20, 29));
@@ -1796,7 +1801,7 @@ public class FacebookInterface extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(FacebookInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        friendListVerticalScrollBar.setValue(friendListVerticalScrollBar.getMinimum());
         friendLayout.show(FriendContainer, "FriendRequestCard");
         panelFriendRequestIcon.setBackground(new Color(121, 98, 242));
         panelFriendlistIcon.setBackground(new Color(6, 20, 29));
@@ -2325,7 +2330,7 @@ public class FacebookInterface extends javax.swing.JFrame {
         return friends;
     }
 
-    private void displayFriend() throws SQLException, IOException {
+    protected void displayFriend() throws SQLException, IOException {
         ArrayList<UserInformation> users = getFriends();
         FriendListCard.removeAll();
         for (UserInformation user : users) {

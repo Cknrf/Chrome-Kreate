@@ -1,4 +1,5 @@
 
+
 import CustomPanels.CirclePicture;
 import CustomPanels.CustomBorderPostStack;
 import javax.swing.*;
@@ -152,6 +153,7 @@ public class CustomFriendListPanel extends javax.swing.JPanel {
         userProfilePicture.setMaximumSize(new java.awt.Dimension(30, 30));
         userProfilePicture.setPreferredSize(new java.awt.Dimension(30, 30));
         
+        UserName.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         UserName.setForeground(new Color(115,130,144));
         UserName.setText(name);
         UserName.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -216,7 +218,7 @@ public class CustomFriendListPanel extends javax.swing.JPanel {
     private void btnUserNameMouseClicked(java.awt.event.MouseEvent evt) {
         try {
             facebook.verticalScrollBar.setValue(facebook.verticalScrollBar.getMinimum());
-            FriendProfile friendProfile = new FriendProfile(friendID, facebook);
+            FriendProfile friendProfile = new FriendProfile(userID ,friendID, facebook);
             facebook.postInnerContainer.removeAll();
             facebook.postInnerContainer.add(friendProfile);
             CustomBorderPostStack customBorder = new CustomBorderPostStack();

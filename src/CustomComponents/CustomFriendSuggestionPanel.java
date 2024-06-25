@@ -1,4 +1,5 @@
 
+import CustomPanels.CustomBorderPostStack;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -16,7 +17,7 @@ public class CustomFriendSuggestionPanel extends javax.swing.JPanel {
     private ImageIcon icon;
     private int friendID;
     private int userID;
-    private FacebookInterface facebookInterface;
+    private FacebookInterface facebook;
 
     Connection con;
     PreparedStatement pst;
@@ -33,12 +34,12 @@ public class CustomFriendSuggestionPanel extends javax.swing.JPanel {
         }
     }
 
-    public CustomFriendSuggestionPanel(ImageIcon icon, String name, int userID, int friendID, FacebookInterface facebookInterface) {
+    public CustomFriendSuggestionPanel(ImageIcon icon, String name, int userID, int friendID, FacebookInterface facebook) {
         this.icon = icon;
         this.name = name;
         this.userID = userID;
         this.friendID = friendID;
-        this.facebookInterface = facebookInterface;
+        this.facebook = facebook;
         initComponents();
         Connect();
     }
@@ -58,9 +59,15 @@ public class CustomFriendSuggestionPanel extends javax.swing.JPanel {
         userProfilePicture.setIcon(icon);
         userProfilePicture.setMaximumSize(new java.awt.Dimension(30, 30));
         userProfilePicture.setPreferredSize(new java.awt.Dimension(30, 30));
-
+        
+        UserName.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         UserName.setForeground(new Color(115,130,144));
         UserName.setText(name);
+        UserName.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnUserNameMouseClicked(evt);
+            }
+        });
 
         addButton.setBackground(new java.awt.Color(153, 153, 255));
         addButton.setText("Add");
@@ -75,11 +82,11 @@ public class CustomFriendSuggestionPanel extends javax.swing.JPanel {
                     int k = pst.executeUpdate();
 
                     if (k == 1) {
-                        JOptionPane.showMessageDialog(facebookInterface, "Friend request sent successfully");
-                        facebookInterface.LoadProfile();
-                        facebookInterface.displayFriendSuggestion();
+                        JOptionPane.showMessageDialog(facebook, "Friend request sent successfully");
+                        facebook.LoadProfile();
+                        facebook.displayFriendSuggestion();
                     } else {
-                        JOptionPane.showMessageDialog(facebookInterface, "Sending friend request failed");
+                        JOptionPane.showMessageDialog(facebook, "Sending friend request failed");
                     }
                 } catch (SQLException ex) {
                     Logger.getLogger(CustomFriendSuggestionPanel.class.getName()).log(Level.SEVERE, null, ex);
@@ -131,6 +138,19 @@ public class CustomFriendSuggestionPanel extends javax.swing.JPanel {
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+    }
+    
+    private void btnUserNameMouseClicked(java.awt.event.MouseEvent evt) {
+        facebook.verticalScrollBar.setValue(facebook.verticalScrollBar.getMinimum());
+        NonFriendProfilePanel nonFriendProfile = new NonFriendProfilePanel(userID, friendID, facebook);
+        facebook.postInnerContainer.removeAll();
+        facebook.postInnerContainer.add(nonFriendProfile);
+        CustomBorderPostStack customBorder = new CustomBorderPostStack();
+        facebook.postInnerContainer.add(customBorder);
+        CustomNoPost noPost = new CustomNoPost("Unable to view post. You are not friends.");
+        facebook.postInnerContainer.add(noPost);
+        facebook.revalidate();
+        facebook.repaint();
     }
 
     // Variables declaration - do not modify
